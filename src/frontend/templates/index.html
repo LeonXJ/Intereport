@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Index</title>
+    <link href="{{url_for('static', filename='css/bootstrap.min.css')}}" rel="stylesheet" media="screen">
+    <link href="{{url_for('static', filename='index.css')}}" rel="stylesheet" media="screen">
+    <script type=text/javascript src="{{url_for('static', filename='jquery.js') }}"></script>
+    <script type=text/javascript src="{{url_for('static', filename='js/bootstrap.min.js') }}"></script>
+
+    <!--
+    <link rel="stylesheet" href="http://cdn.bootcss.com/twitter-bootstrap/3.0.3/css/bootstrap.min.css">
+    <link rel="stylesheet" href="index.css">
+    <script src="http://cdn.bootcss.com/jquery/1.10.2/jquery.min.js"></script>
+    <script src="http://cdn.bootcss.com/twitter-bootstrap/3.0.3/js/bootstrap.min.js"></script>
+    -->
+
+</head>
+<body>
+    <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+      <div class="container">
+        <div class="navbar-header">
+          <a class="navbar-brand" href="#">Intereport</a>
+        </div>
+        <div class="collapse navbar-collapse">
+          <ul class="nav navbar-nav navbar-right">
+              <li><a data-toggle="modal" href="#myModal">About</a></li>
+          </ul>
+        </div><!--/.nav-collapse -->
+      </div>
+    </div>
+
+    <div style="text-align:center; padding: 60px;"><img
+            src="{{url_for('static', filename='logo.png')}}" /></div>
+    <div class="container">
+        <form role="form" action="/ir_demo/feedback" method="POST">
+        <div class="row" style="margin-bottom: -8px;">
+            <div class="col-md-6">
+                <div class="input-group">
+                    <span class="input-group-addon">
+                        <div>Product</div>
+                    </span>
+                    <select class="form-control" id="product" name="product">
+                        <option>Please select product</option>
+ <option>evolution</option> <!--55770-->
+ <option>nautilus</option> <!--35058-->
+ <option>gtk+</option> <!--11798-->
+ <option>galeon</option> <!--11417-->
+ <option>totem</option> <!--10504-->
+ <option>epiphany</option> <!--10005-->
+ <option>rhythmbox</option> <!--9716-->
+ <option>gnome-panel</option> <!--9400-->
+ <option>gimp</option> <!--8608-->
+ <option>gstreamer</option> <!--8602-->
+ <option>gnome-games</option> <!--8459-->
+ <option>deskbar-applet</option> <!--8456-->
+ <option>gnome-control-center</option> <!--8098-->
+ <option>gnome-applets</option> <!--6249-->
+ <option>gnome-core</option> <!--5441-->
+ <option>gedit</option> <!--5183-->
+ <option>evince</option> <!--5067-->
+ <option>gnumeric</option> <!--5027-->
+ <option>gnome-utils</option> <!--4554-->
+ <option>gnome-terminal</option> <!--4354-->
+ <option>glib</option> <!--4288-->
+ <option>banshee</option> <!--4252-->
+ <option>gnucash</option> <!--4115-->
+ <option>gnome-system-tools</option> <!--4081-->
+ <option>gimmie</option> <!--3416-->
+ <option>ekiga</option> <!--3145-->
+ <option>eog</option> <!--2995-->
+ <option>l10n</option> <!--2731-->
+ <option>gthumb</option> <!--2564-->
+ <option>gtkhtml</option> <!--2480-->
+ <option>vala</option> <!--2467-->
+ <option>f-spot</option> <!--2454-->
+ <option>pan</option> <!--2403-->
+ <option>empathy</option> <!--2373-->
+ <option>gnome-media</option> <!--2337-->
+ <option>dia</option> <!--2327-->
+ <option>metacity</option> <!--2202-->
+ <option>gnome-vfs</option> <!--2121-->
+ <option>yelp</option> <!--2070-->
+ <option>file-roller</option> <!--2064-->
+ <option>orca</option> <!--1978-->
+ <option>doxygen</option> <!--1906-->
+ <option>anjuta</option> <!--1833-->
+ <option>gdm</option> <!--1830-->
+ <option>networkmanager</option> <!--1719-->
+ <option>pango</option> <!--1632-->
+ <option>evolution-data-server</option> <!--1522-->
+ <option>evolution exchange</option> <!--1497-->
+ <option>balsa</option> <!--1469-->
+ <option>bugzilla.gnome.org</option> <!--1447-->
+ <option>bug-buddy</option> <!--1402-->
+ <option>gnome-shell</option> <!--1395-->
+ <option>gnome-power-manager</option> <!--1388-->
+ <option>beagle</option> <!--1356-->
+ <option>xchat-gnome</option> <!--1319-->
+ <option>sound-juicer</option> <!--1305-->
+ <option>system-monitor</option> <!--1265-->
+ <option>jhbuild</option> <!--1219-->
+ <option>seahorse</option> <!--1195-->
+ <option>libxml2</option> <!--1191-->
+ <option>gal</option> <!--1165-->
+ <option>gnome-pilot</option> <!--1115-->
+ <option>gnome-desktop</option> <!--1056-->
+ <option>gossip</option> <!--1048-->
+ <option>vte</option> <!--1047-->
+ <option>pygtk</option> <!--1033-->
+ <option>brasero</option> <!--1006-->
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="input-group">
+                    <span class="input-group-addon">
+                        <div>Report Time</div>
+                    </span>
+                    <input type="text" class="form-control" value=""
+                           placeholder="Report Time in xxxx-xx-xx" id="date" name="date">
+                </div>
+            </div>
+        </div>
+        <div class="input-group">
+            <span class="input-group-addon">
+                <div>Summary</div>
+            </span>
+            <input type="text" class="form-control" id="summary"
+                   name="summary"
+                   placeholder="Summary (within 255 characters)">
+        </div>
+
+        <div class="input-group">
+            <span class="input-group-addon">
+                <div>Description</div>
+            </span>
+            <textarea type="text" class="form-control" id="description"
+                   name="description" placeholder="Description"
+                   style="resize: none; height:200px;"></textarea>
+        </div>
+
+        <div class="input-group">
+            <span class="input-group-addon">
+                <div>Stacktrace</div>
+            </span>
+            <textarea type="text" class="form-control" id="stacktrace"
+                   name="stacktrace" placeholder="Stacktrace"
+                   style="resize: none; height: 200px;"></textarea>
+        </div>
+
+
+        <div class="navbar navbar-inverse navbar-fixed-bottom"
+             role="navigation">
+            <div class="container" style="text-align: center;vertical-align: middle;">
+                <button type="submit" class="btn btn-primary"
+                        style="margin:10px; height: 60px; width:180px; border-radius: 16px;"><h2 style="margin-top:8px">SUBMIT</h2>
+                    </button>
+            </div><!-- /.row -->
+        </div>
+
+        </form>
+    </div>
+
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title" id="myModalLabel">About Intereport</h4>
+      </div>
+      <div class="modal-body">
+          <p style="margin:20px"><img src="{{url_for('static', filename='logo.png')}}"/></p>
+          <p>Thank you for using the next-gen bug reporting system. Even
+              thought this
+          is a demo, we hope you're inspired by our innovation. We're
+          expecting your advise. </p>
+          <p>Enjoy it.</p>
+      </div>
+      <div class="modal-footer" style="text-align: center">
+        <button type="button" class="btn btn-default" data-dismiss="modal">
+            OK</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+</body>
+</html>

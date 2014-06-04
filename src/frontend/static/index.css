@@ -1,0 +1,12 @@
+body{
+	padding-top: 50px;
+	padding-bottom: 100px;
+}
+
+div.input-group{
+	margin: 5px;
+}
+
+span div{
+	width: 100px;
+}

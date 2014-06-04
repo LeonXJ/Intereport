@@ -1,0 +1,66 @@
+#title{
+    margin-left: 40px;
+    margin-top: 40px;
+}
+
+#basic{
+    font-size: 12pt;
+    border-style: solid;
+    border-width: 1px;
+    padding: 10px;
+}
+
+#feedback{
+    margin-top: 15px
+}
+#question{
+    font-size: 15pt
+}
+
+.similardescription{
+    width: 70%;
+    float: left;
+    height: 100%;
+}
+
+.metoo{
+    width: 15%;
+    float: right;
+    height: 100%;
+}
+
+.choice{
+    font-weight: bold;
+    margin: 5px;
+    overflow: auto;
+    padding: 10px;
+    border-style: solid;
+    border-width: 1px;
+}
+
+#input{
+    margin-top: 10px;
+}
+
+#candidate{
+    overflow: auto;
+    padding: 10px;
+    border-style: solid;
+    border-width: 1px;
+}
+
+.candidatebug{
+    padding: 5px;
+    margin-top:5px;
+    border-style: solid;
+    border-width: 1px;
+}
+
+.bugid{
+    font-weight: bold;
+}
+
+#loading{
+    padding: 15px;
+    height: 80px;
+}

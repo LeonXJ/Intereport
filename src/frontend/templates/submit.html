@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Report Submitted</title>
+    <link href="{{url_for('static', filename='css/bootstrap.min.css')}}" rel="stylesheet" media="screen">
+    <link href="{{url_for('static', filename='index.css')}}" rel="stylesheet"
+          media="screen">
+    <script type=text/javascript src="{{url_for('static', filename='jquery.js') }}"></script>
+    <script type=text/javascript src="{{url_for('static', filename='js/bootstrap.min.js') }}"></script>
+
+    <!--
+    <link rel="stylesheet" href="http://cdn.bootcss.com/twitter-bootstrap/3.0.3/css/bootstrap.min.css">
+    <link rel="stylesheet" href="index.css">
+    <script src="http://cdn.bootcss.com/jquery/1.10.2/jquery.min.js"></script>
+    <script src="http://cdn.bootcss.com/twitter-bootstrap/3.0.3/js/bootstrap.min.js"></script>
+    -->
+
+
+</head>
+<body>
+    <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+      <div class="container">
+        <div class="navbar-header">
+          <a class="navbar-brand" href="#">Intereport</a>
+        </div>
+        <div class="collapse navbar-collapse">
+          <p class="navbar-text navbar-left">[{{product}}] {{summary}}</p>
+          <ul class="nav navbar-nav navbar-right">
+              <li><a data-toggle="modal" data-target="#myModal"
+                  href="#">About</a></li>
+          </ul>
+        </div><!--/.nav-collapse -->
+      </div>
+    </div>
+
+    <div class="container" style="text-align: center; padding:60px;">
+        <h1>Thank you for your contribution!</h1>
+    </div>
+    <div class="container">
+        <div class="input-group">
+            <span class="input-group-addon"><div>Summary</div></span>
+            <input type="text" class="form-control"
+                   readonly value="{{summary}}">
+        </div>
+        <div class="input-group">
+            <span class="input-group-addon"><div>Description</div></span>
+            <textarea type="text" class="form-control"
+                      style="height:200px; resize: none"
+                   readonly >{{description}}</textarea>
+        </div>
+        {% if is_duplicate == True %}
+        <div style="text-align: center; margin:20px">
+            <h4>Duplicate with report# {{duplicate}}</h4>
+        </div>
+        {% endif %}
+    </div>
+    <div class="container" style="text-align: center">
+
+    </div>
+
+    <div class="navbar navbar-inverse navbar-fixed-bottom" role="navigation">
+            <div class="container"
+                 style="text-align: center; vertical-align: middle;">
+                 <a href="/ir_demo/">
+                 <button type="submit" class="btn btn-primary" href="/ir_demo/"
+                        style="margin:10px;  border-radius: 16px;"><h4 style="margin-top:10px">CREATE NEW REPORT</h4>
+                    </button>
+                 </a>
+            </div><!-- /.row -->
+        </div>
+
+        </form>
+    </div>
+
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title" id="myModalLabel">About Intereport</h4>
+      </div>
+      <div class="modal-body">
+          <p style="margin:20px"><img src="{{url_for('static', filename='logo.png')}}"/></p>
+          <p>Thank you for using the next-gen bug reporting system. Even
+              thought this
+          is a demo, we hope you're inspired by our innovation. We're
+          expecting your advise. </p>
+          <p>Enjoy it.</p>
+      </div>
+      <div class="modal-footer" style="text-align: center">
+        <button type="button" class="btn btn-default" data-dismiss="modal">
+            OK</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+</body>
+</html>

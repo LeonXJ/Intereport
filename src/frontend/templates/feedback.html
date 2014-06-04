@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Feedback</title>
+    <link href="{{url_for('static', filename='css/bootstrap.min.css')}}" rel="stylesheet" media="screen">
+    <link href="{{url_for('static', filename='feedback.css')}}" rel="stylesheet" media="screen">
+    <script type=text/javascript src="{{url_for('static', filename='jquery.js') }}"></script>
+    <script type=text/javascript src="{{url_for('static', filename='js/bootstrap.min.js') }}"></script>
+    <script type=text/javascript>
+        $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
+    </script>
+    <script type="text/javascript">
+        $(function () {
+
+            $(document).ajaxStart(function(){
+                $('#loading').html("<img src='{{url_for('static', filename='loading.gif')}}'/>");
+            });
+
+            $(document).ajaxSuccess(function(){
+                $('#loading').html("");
+            });
+
+            $(".sentencemetoo").click(function () {
+                sentence = $(this).parent().parent().find(".similardescription").text()
+                $('#mycase').append(sentence + "\n")
+            })
+
+            $('#notsure').bind('click', function() {
+
+                $.getJSON($SCRIPT_ROOT + '/_notsure', {
+                    term:$('#term').text(),
+                }, 
+                function(data) {
+                    // Deal with term
+                    $("#term").text(data.term);
+                    sentences_id = data.sentences_id
+                    // Deal with sentences
+
+                    var sentences = $('#similar').children('.choice')
+                    for (var i = 0; i < sentences.length; i++) {
+                        if (i >= data.sentences.length){
+                            $(sentences[i]).find('.similardescription').text("")
+                        } else {
+                            var sentence = data.sentences[i]
+                            $(sentences[i]).find('.similardescription').text(sentences_id[i] + " " + sentence)
+                        }    
+                    };
+
+                    // Deal with similar report
+                    var bugs = $('#candidate').children('.candidatebug')
+                    for (var i = 0; i < bugs.length; i++) {
+                        if (i == data.bugs.length){
+                            break
+                        } else {
+                            var bugid = data.bugs[i].bugid
+                            var summ = data.bugs[i].summ
+                            //var desc = data.bugs[i].desc
+                            $(bugs[i]).find('.bugid').text(bugid)
+                            $(bugs[i]).find('.summ').text(summ)
+                            //$(bugs[i]).find('.desc').text(desc)
+                        }    
+                    };
+
+
+                });
+                return false;
+            });
+
+            $('#never').bind('click', function() {
+
+                $.getJSON($SCRIPT_ROOT + '/_never', {
+                    term:$('#term').text(),
+                }, 
+                function(data) {
+                    // Deal with term
+                    $("#term").text(data.term);
+                    sentences_id = data.sentences_id
+                    // Deal with sentences
+
+                    var sentences = $('#similar').children('.choice')
+                    for (var i = 0; i < sentences.length; i++) {
+                        if (i >= data.sentences.length){
+                            $(sentences[i]).find('.similardescription').text("")
+                        } else {
+                            var sentence = data.sentences[i]
+                            $(sentences[i]).find('.similardescription').text(sentences_id[i] + " " + sentence)
+                        }    
+                    };
+
+                    // Deal with similar report
+                    var bugs = $('#candidate').children('.candidatebug')
+                    for (var i = 0; i < bugs.length; i++) {
+                        if (i == data.bugs.length){
+                            break
+                        } else {
+                            var bugid = data.bugs[i].bugid
+                            var summ = data.bugs[i].summ
+                            //var desc = data.bugs[i].desc
+                            $(bugs[i]).find('.bugid').text(bugid)
+                            $(bugs[i]).find('.summ').text(summ)
+                            //$(bugs[i]).find('.desc').text(desc)
+                        }    
+                    };
+
+
+                });
+                return false;
+            });
+
+            $('#submit').bind('click', function() {
+               
+                $.getJSON($SCRIPT_ROOT + '/_submit', {
+                    date:"{{date}}",
+                    term:"{{term}}",
+                    product:"{{product}}",
+                    summary:"{{summary}}",
+                    description:$('#mycase').text(),
+                    stacktrace:$('#stacktrace').text()
+                }, 
+                function(data) {
+                    // Deal with term
+                    $("#term").text(data.term);
+                    sentences_id = data.sentences_id
+                    // Deal with sentences
+
+                    var sentences = $('#similar').children('.choice')
+                    for (var i = 0; i < sentences.length; i++) {
+                        if (i >= data.sentences.length){
+                            $(sentences[i]).find('.similardescription').text("")
+                        } else {
+                            var sentence = data.sentences[i]
+                            $(sentences[i]).find('.similardescription').text(sentences_id[i] + " " + sentence)
+                        }    
+                    };
+
+                    // Deal with similar report
+                    var bugs = $('#candidate').children('.candidatebug')
+                    for (var i = 0; i < bugs.length; i++) {
+                        if (i == data.bugs.length){
+                            break
+                        } else {
+                            var bugid = data.bugs[i].bugid
+                            var summ = data.bugs[i].summ
+                            //var desc = data.bugs[i].desc
+                            $(bugs[i]).find('.bugid').text(bugid)
+                            $(bugs[i]).find('.summ').text(summ)
+                            //$(bugs[i]).find('.desc').text(desc)
+                        }    
+                    };
+
+
+                });
+                return false;
+            });
+})
+    </script>
+</head>
+<body>
+    <h1 id="title">Need more from you</h1>
+    
+    <div class="container">
+
+        <div class="row">
+            <div class="col-md-8">
+                <div id="basic">
+                    <p >Product: {{product}}</p>
+                    <p>Summary: {{summary}}</p>
+                </div>
+                <div id="loading"></div>
+                <div id="feedback">
+                    <p id="question"> Have you ever seen <font style="color:red" id="term">{{term}}</font> ? For example:</p>
+                    <div id="similar">
+                        {% for i in range(sentences.__len__())%}
+                        <div class="choice">
+                            <div class="similardescription">{{sentences_id[i]}}  {{ sentences[i]}}</div>
+                            <div class="metoo"><button type="button" class="btn btn-success sentencemetoo">Me too</button></div>
+                        </div>
+                        {% endfor %}
+                        
+                    </div>
+                    <div id="input">
+                    <form role="form">
+                        <div class="form-group">
+                            <label for="mycase">Yeah, but my case is different:</label>
+                            <textarea rows="5" class="form-control" id="mycase" placeholder="Your description"></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <textarea rows="5" class="form-control" id="stacktrace" style="display:none">{{stacktrace}}</textarea>
+                        </div>
+
+                        <button id="submit"  class="btn btn-success">Submit</button>
+                        <button id="notsure"  class="btn btn-warning">I'm not sure</button>
+                        <button id="never"  class="btn btn-danger">Never</button>
+                        </form>
+                        
+                    </div>
+                    
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div id="candidate">
+
+                    <p style="font-size:15pt">Similar report</p>
+                    {% for bug in bugs%}
+                    <div class="candidatebug">
+                        <div class="bugid">Bug {{bug['bugid']}}</div>
+                        <p class="summ">Summary: {{bug['summ']}} crashed</p>
+                        <p class="desc">Description: </p>
+                        <button  type="submit" class="bugmetoo btn btn-primary">Me too</button>
+                    </div>
+                    {% endfor %}
+           
+                </div>
+                
+            </div>
+        </div>
+    </div>
+</body>
+</html>

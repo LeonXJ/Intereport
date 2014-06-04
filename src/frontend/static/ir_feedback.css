@@ -1,0 +1,59 @@
+body{
+	padding-top: 50px;
+	padding-bottom: 140px;
+}
+
+.ir-tip{
+	text-align: center;
+	padding: 40px;
+	border-radius: 0px;
+}
+
+.ir-section-title{
+	text-align: center;
+	padding: 10px;
+}
+
+
+.ir-block{
+	background-color: #ECECEC;
+	padding: 5px;
+	border-radius: 5px;
+    margin: 3px;
+}
+
+.ir-block-row{
+	padding-bottom: 5px;
+	vertical-align: middle;
+}
+
+.ir-desc-writter{
+	padding-top: 10px;
+	padding-bottom: 10px;
+}
+
+.ir-block-row-button{
+	text-align: right;
+}
+
+.ir-block-content{
+	padding-left: 5px;
+	background-color: #FFFFFF;
+}
+
+.ir-description-area{
+	resize: none;
+	height: 100px;
+	width: 100%;
+}
+
+.ir-title-button{
+	margin: 3px;
+	margin-bottom: 10px;
+	width: 200px;
+	border-radius: 5px;
+}
+
+#term{
+    color: red;
+}

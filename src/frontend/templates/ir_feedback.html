@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Intereport</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Bootstrap local
+    <link rel="stylesheet" href="http://cdn.bootcss.com/twitter-bootstrap/3.0.3/css/bootstrap.min.css">
+    <link rel="stylesheet" href="ir_feedback.css">
+    <script src="http://cdn.bootcss.com/jquery/1.10.2/jquery.min.js"></script>
+    <script src="http://cdn.bootcss.com/twitter-bootstrap/3.0.3/js/bootstrap.min.js"></script>
+    -->
+
+    <link href="{{url_for('static', filename='css/bootstrap.min.css')}}" rel="stylesheet" media="screen">
+    <link href="{{url_for('static', filename='ir_feedback.css')}}" rel="stylesheet" media="screen">
+    <script type=text/javascript src="{{url_for('static', filename='jquery.js') }}"></script>
+    <script type=text/javascript src="{{url_for('static', filename='js/bootstrap.min.js') }}"></script>
+    <script type=text/javascript>
+        $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
+    </script>
+    <script type="text/javascript">
+      function hideloading(){
+        $('#loading').hide();
+      }
+
+      $(function () {
+          
+        var update_all = function update_all_data(data){
+            // tip
+            $("#tip").text(data.tip);
+        
+            // Deal with term
+            $("#term").text(data.keyword);
+              // Deal with sentences
+
+            if( data.sentences.length == 0){
+                $('#complete').hide();
+                $('#ir-sen-num').hide();
+            }
+            else{
+                $('#complete').show();
+                $('#ir-sen-num').show();
+                $('#ir-sen-num').text(data.sentences.length);
+            var div_sentences = $('#complete').children('.ir-block');
+            for (var i = 0; i < div_sentences.length; i++) {
+                if (i >= data.sentences.length){
+                    $(div_sentences[i]).hide();
+                } 
+                else {
+                    $(div_sentences[i]).show();
+                    $(div_sentences[i]).find('.ir-block-content').text(data.sentences[i][1]);
+                    $(div_sentences[i]).find('.report-id').text(""+data.sentences[i][0]);
+                    $(div_sentences[i]).find('a')[0].href="{{report_link}}"+data.sentences[i][0];    
+                }
+            }
+            }
+              
+            // Deal with similar report
+            if(data.duplicates.length == 0){
+                $('#duplicates').hide();
+                $('#ir-dup-num').hide();
+            }
+            else{
+                $('#duplicates').show();
+                $('#ir-dup-num').show();
+                $('#ir-dup-num').text(data.duplicates.length)
+                $('#duplicate-number').text(data.duplicates.length)
+                var div_duplicates = $('#duplicates').children('.ir-block');
+                for (var i = 0; i < div_duplicates.length; i++) {
+                    if (i >= data.duplicates.length){
+                        $(div_duplicates[i]).hide()
+                    } 
+                    else {
+                        $(div_duplicates[i]).show()
+                        //var desc = data.bugs[i].desc
+                        $(div_duplicates[i]).find('.report-id').text(data.duplicates[i][0]);
+                        $(div_duplicates[i]).find('.ir-block-content').text(data.duplicates[i][2]);
+                        $(div_duplicates[i]).find('.report-summary').text(data.duplicates[i][1]);
+                        $(div_duplicates[i]).find('a')[0].href = "{{report_link}}" + data.duplicates[i][0];
+                    }    
+                }
+            }
+        }
+          $(document).ajaxStart(function(){
+              $('#tip').hide();
+              $('#loading').show();    
+          });
+
+          $(document).ajaxSuccess(function(){
+              $('#loading').hide();
+              $('#tip').show();
+          });
+
+          $(".dup-me-too").click(function(){
+              var dup_id = $(this).parent().parent().parent().find(".report-id").text()
+              var dup_dialog = $("#dup_dialog"); 
+              dup_dialog.find("#dup_id").text(dup_id);
+              dup_dialog.find("#dup_link")[0].href = "/ir_demo/submit_report?dup_id=" + dup_id;
+              dup_dialog.modal();    
+          });
+        
+
+          $(".sentence-metoo").click(
+              function () {
+                  sentence = $(this).parent().parent().parent().find(".ir-block-content").text();
+                  textarea = $('#ir-description-text');
+                  textarea.val(textarea.val() + "\n" + sentence);
+              }
+          );
+
+          $(".not-mine").click(
+              function(){
+                  ignore_id = $(this).parent().parent().parent().find(".report-id").text()
+                  $.getJSON($SCRIPT_ROOT + '/_notmine',
+                      { ignore_id:ignore_id,},
+                      update_all
+                  );
+              }
+          );
+
+          $('#notsure').bind('click', 
+              function() {
+                  $.getJSON($SCRIPT_ROOT + '/_notsure', 
+                      { term:$('#term').text(),}, 
+                      update_all
+                  );
+                  return false;
+              }
+          );
+
+          
+          $('#never').bind('click', 
+              function() {
+                  $.getJSON($SCRIPT_ROOT + '/_never', 
+                      {term:$('#term').text(),}, 
+                      update_all
+                  );
+                  return false;
+              }
+          );
+
+          $('#update').bind('click', 
+              function() {
+                  $.getJSON($SCRIPT_ROOT + '/_submit', 
+                      { date:"{{create_ts}}",
+                        term:"{{keyword}}",
+                        product:"{{product}}",
+                        summary:"{{summary}}",
+                        description:$('#ir-description-text').val()
+                      }, 
+                      update_all
+                  );
+                  return false;
+              }
+          );
+      })
+    </script>
+  </head>
+
+  <body onload="hideloading()">
+    <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+      <div class="container">
+        <div class="navbar-header">
+          <a class="navbar-brand" href="#">Intereport</a>
+        </div>
+        <div class="collapse navbar-collapse">
+          <p class="navbar-text navbar-left">[{{product}}] {{summary}}</p>
+          <ul class="nav navbar-nav navbar-right">
+              <li><a href="#duplicates">Possible Duplicates <span id="ir-dup-num" class="badge" style="background-color: #FF0000; {% if duplicates.__len__() == 0 %}display: none;{% endif %}">{{duplicates.__len__()}}</span></a></li>
+              <li><a href="#complete">Recommend Sentences <span id="ir-sen-num" class="badge" style="background-color: #FF0000; {% if sentences.__len__() == 0 %}display: none;{% endif %}">{{sentences.__len__()}}</span></a></li>
+            <li><a data-toggle="modal" href="#submit_dialog">Submit</a></li>
+            <li><a data-toggle="modal" href="#cancel_dialog">Cancel</a></li>
+          </ul>
+        </div><!--/.nav-collapse -->
+      </div>
+    </div>
+    <!-- tips -->
+    <div class="well ir-tip">
+        <img id='loading' src='{{url_for('static', filename='loading.gif')}}'/>
+        <h1 id="tip">{{tip}}</h1>
+    </div>
+    <!--/tips -->
+    <!--duplicats-->
+    <div {% if duplicates.__len__() == 0 %} style="display: none" {% endif %}  id="duplicates" class="container">
+        <h3 class="ir-section-title"><span id="duplicate-number">{{duplicates.__len__()}}</span> Possible Duplicate Reports</h3>
+        {% for index in range(max_duplicates)%}
+        <div {% if index >= duplicates.__len__() %} style="display: none" {% endif %} class="ir-block">
+          <div class="row ir-block-row">
+            <div class="col-md-9">
+                <div>
+                    <a href="{% if index < duplicates.__len__() %} {{report_link}}{{duplicates[index][0]}}{% endif %}">
+                    <span class="label label-primary report-id">
+                      {% if index < duplicates.__len__() %}
+                      {{duplicates[index][0]}}
+                      {% endif %}
+                    </span> 
+                  </a>
+                  <span class="report-summary">
+                      {% if index < duplicates.__len__() %}
+                      {{duplicates[index][1]}}
+                      {% endif %}
+                  </span>
+              </div>
+            </div>
+            <div class="col-md-3 ir-block-row-button">
+              <div class="btn-group btn-group-xs">
+                <button type="button" class="btn btn-primary dup-me-too">Me too</button>
+                <button type="button" class="btn btn-primary not-mine">Not mine</button>
+              </div>
+            </div>
+          </div>
+          <div class="ir-block-content">
+                      {% if index < duplicates.__len__() %}
+                      {{duplicates[index][2]}}
+                      {% endif %}
+          </div>
+        </div>
+        {% endfor %}
+    </div>
+    <!-- /duplicates-->
+    <!-- complete-->
+    <div id="complete" class="container" {% if sentences.__len__() == 0 %}style="display: none"{% endif %}>
+        <h3 class="ir-section-title">Have you ever seen <span id="term">{{keyword}}</span>?</h3>
+      <div class="row" style="text-align:center">
+        <div class="btn-group">
+          <button type="button" class="btn btn-primary ir-title-button">Examples</button>
+          <button id="never" type="button" class="btn btn-primary ir-title-button">Never</button>
+          <button id="notsure" type="button" class="btn btn-primary ir-title-button">Not Sure</button>
+        </div>
+      </div>
+      {% for index in range(max_sentences)%}
+      <div {%if index >= sentences.__len__() %} style="display: none" {% endif %} class="ir-block">
+          <div class="row ir-block-row">
+            <div class="col-md-10">
+                <a href="{% if index < sentences.__len__() %}{{report_link}}{{sentences[index][0]}}"{% endif %}">
+                <span class="label label-primary report-id">
+                    {% if index < sentences.__len__() %}
+                    {{sentences[index][0]}}
+                    {% endif %}
+                </span>
+                </a>
+            </div>
+            <div class="col-md-2 ir-block-row-button">
+              <button class="btn btn-primary btn-xs sentence-metoo">Me Too</button>
+            </div>
+          </div>
+          <div class="ir-block-content">{% if index < sentences.__len__() %}{{sentences[index][1]}}{% endif %}
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+    <!-- /complete-->
+
+    <div class="navbar navbar-inverse navbar-fixed-bottom" role="navigation">
+      <div class="container">
+        <div class="ir-desc-writter">
+          <div class="input-group">
+              <textarea id="ir-description-text" class="ir-description-area">{{description}}</textarea>
+            <span class="input-group-btn">
+              <button id="update" class="btn btn-primary ir-description-area" type="button">Update</button>
+            </span>
+          </div><!-- /input-group -->
+        </div>
+      </div><!-- /.row -->
+    </div>
+
+<!-- submit_dialog -->
+<div class="modal fade" id="submit_dialog" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title" id="myModalLabel">Submit! Really?</h4>
+      </div>
+      <div class="modal-body">
+          <p style="margin:20px"><img src="{{url_for('static', filename='logo.png')}}"/></p>
+          <p>The content of your report seems not detail enough yet. It may taks more time to deal with a bug without concrete information. Do you really want to submit this report?</p>
+          <p>I'm serious.</p>
+      </div>
+      <div class="modal-footer" style="text-align: center">
+        <button type="button" class="btn btn-primary" data-dismiss="modal">
+        Let's make it Better</button>
+        <a href="/ir_demo/submit_report">
+            <button type="button" class="btn btn-default">Submit Anyway</button>
+        </a>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+<!-- cancel_dialog -->
+<div class="modal fade" id="cancel_dialog" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title" id="myModalLabel">Quit, Really?</h4>
+      </div>
+      <div class="modal-body">
+          <p style="margin:20px"><img src="{{url_for('static', filename='logo.png')}}"/></p>
+          <p>Do you really want to cease reporting?</p>
+          <p>Think twice before you cancel.</p>
+      </div>
+      <div class="modal-footer" style="text-align: center">
+        <button type="button" class="btn btn-primary" data-dismiss="modal">
+        I'm not mean to Cancel</button>
+        <a href="/ir_demo/">
+            <button type="button" class="btn btn-default">Cancel Resolutely</button>
+        </a>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+<!-- dup_dialog -->
+<div class="modal fade" id="dup_dialog" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title" id="myModalLabel">Really Duplicate?</h4>
+      </div>
+      <div class="modal-body">
+          <p style="margin:20px"><img src="{{url_for('static', filename='logo.png')}}"/></p>
+          <p>You're gonna mark your report as duplicate as report#=<span id="dup_id"></span></p>
+          <p>If you mark duplicate, your report will be submitted as a VOTE.</p>
+      </div>
+      <div class="modal-footer" style="text-align: center">
+      <a id="dup_link" href="/ir_demo/">
+        <button type="button" class="btn btn-primary">
+            Confirm Duplicate
+        </button>
+      </a>
+        <button type="button" class="btn btn-default" data-dismiss="modal">Let Me Check</button>
+        
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+  </body>
+</html>
